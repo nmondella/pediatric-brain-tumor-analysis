@@ -101,7 +101,7 @@ raw_data <- read_excel(data_path)
 Le variabili del dataset possono essere classificate in diverse categorie cliniche:
 
 ### Variabili Demografiche
-- **Pat. No.**: Identificativo univoco del paziente
+- **Pat. No.**: Identificativo univoco del paziente (*utilizzato solo come identificativo, escluso dalle analisi statistiche*)
 - **Sex**: Sesso del paziente (1 = Maschio, 2 = Femmina)
 - **Age**: Anno di nascita del paziente
 
@@ -231,6 +231,11 @@ if(length(high_missing_vars) > 0) {
 
 ```{r impute_numeric}
 numeric_vars_clean <- cleaned_data[sapply(cleaned_data, is.numeric)]
+
+# IMPORTANTE: Esclude Pat. No. dall'imputazione (è solo identificativo, non deve essere modificato)
+numeric_vars_clean <- numeric_vars_clean[, !names(numeric_vars_clean) %in% c("Pat. No.")]
+cat("NOTA: Pat. No. è escluso dall'imputazione (solo identificativo)\n\n")
+
 if(ncol(numeric_vars_clean) > 0) {
   for(col in names(numeric_vars_clean)) {
     if(sum(is.na(cleaned_data[[col]])) > 0) {
@@ -247,6 +252,10 @@ if(ncol(numeric_vars_clean) > 0) {
 
 ```{r outlier_treatment_clinical}
 numeric_vars_final <- cleaned_data[sapply(cleaned_data, is.numeric)]
+
+# IMPORTANTE: Esclude Pat. No. dal trattamento outliers (è solo identificativo)
+numeric_vars_final <- numeric_vars_final[, !names(numeric_vars_final) %in% c("Pat. No.")]
+cat("NOTA: Pat. No. è escluso dal trattamento outliers (solo identificativo)\n\n")
 
 if(ncol(numeric_vars_final) > 0) {
   outliers_treated <- cleaned_data
@@ -685,12 +694,15 @@ par(mfrow = c(1, 1))
 L'analisi delle correlazioni permette di identificare **associazioni lineari** tra variabili cliniche, fondamentali per comprendere le interrelazioni prognostiche.
 
 ```{r correlation_matrix}
+# Prepara variabili numeriche per analisi correlazioni
 numeric_vars_final <- cleaned_data[sapply(cleaned_data, is.numeric)]
+# IMPORTANTE: Esclude Pat. No. dalle correlazioni (è solo un identificativo, non deve essere normalizzato)
 numeric_vars_final <- numeric_vars_final[, !names(numeric_vars_final) %in% c("Pat. No.")]
 
 cor_matrix <- cor(numeric_vars_final, use = "complete.obs")
 
 cat("Variabili incluse nell'analisi di correlazione:\n")
+cat("NOTA: Pat. No. è escluso dall'analisi (solo identificativo)\n\n")
 for(i in 1:ncol(numeric_vars_final)) {
   cat(i, ".", names(numeric_vars_final)[i], "\n")
 }
