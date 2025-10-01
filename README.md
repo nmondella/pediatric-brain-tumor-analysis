@@ -211,7 +211,7 @@ This project is available for academic and research purposes. Please cite approp
 For questions or collaborations:
 - Author: Nicholas Mondella
 - Student ID: 859673
-- Institution: [Your Institution Name]
+- Institution: Università degli Studi di Milano - Bicocca
 
 ---
 
